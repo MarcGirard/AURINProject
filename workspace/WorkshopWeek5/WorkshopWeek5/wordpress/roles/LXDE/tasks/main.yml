@@ -1,0 +1,5 @@
+---
+# setup LXDE desktop environment on all instances
+- name: execute LXDE shell script
+  script: ./run-LXDE.sh
+

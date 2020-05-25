@@ -8,15 +8,15 @@
     install_recommends: no
     update_cache: yes
 
-# - name: Make file system
-#   tags: 'volumes'
-#   become: yes
-#   filesystem:
-#     fstype: xfs
-#     dev: "{{ item.device }}"
-#   when: item.device is defined
-#   with_items:
-#     - "{{ volumes }}"
+- name: Make file system
+  tags: 'volumes'
+  become: yes
+  filesystem:
+    fstype: xfs
+    dev: "{{ item.device }}"
+  when: item.device is defined
+  with_items:
+    - "{{ volumes }}"
 
 - name: Checking folders
   tags: 'volumes'
@@ -38,14 +38,14 @@
   with_items:
     - "{{ directory_stats.results }}"
 
-# - name: Mount device
-#   tags: 'volumes'
-#   become: yes
-#   mount:
-#     path: "{{ item.mountpoint }}"
-#     src: "{{ item.device }}"
-#     fstype: xfs
-#     state: mounted
-#   when: item.device is defined
-#   with_items:
-#     - "{{ volumes }}"
+- name: Mount device
+  tags: 'volumes'
+  become: yes
+  mount:
+    path: "{{ item.mountpoint }}"
+    src: "{{ item.device }}"
+    fstype: xfs
+    state: mounted
+  when: item.device is defined
+  with_items:
+    - "{{ volumes }}"
