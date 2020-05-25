@@ -1,0 +1,5 @@
+[Wordpress]
+172.26.134.6 ansible_python_interpreter=/usr/bin/python3
+172.26.133.171 ansible_python_interpreter=/usr/bin/python3
+172.26.133.101 ansible_python_interpreter=/usr/bin/python3
+172.26.133.114 ansible_python_interpreter=/usr/bin/python3

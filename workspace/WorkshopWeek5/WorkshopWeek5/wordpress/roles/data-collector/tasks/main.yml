@@ -1,0 +1,26 @@
+---
+# install couchDB
+- name: Install couchDB
+  become: yes
+  pip:
+    name: ['couchdb']
+    state: latest
+# pip install couchdb
+
+# install StringColor
+- name: Install StringColor
+  become: yes
+  pip:
+    name: ['string-color']
+    state: latest
+
+# copy data collector file
+- name: Copy steamid.py file
+  copy:
+    src: steamid.py
+    dest: ~/
+
+# run data collector script
+- name: execute data collector on nodes
+  shell: python3 steamid.py
+

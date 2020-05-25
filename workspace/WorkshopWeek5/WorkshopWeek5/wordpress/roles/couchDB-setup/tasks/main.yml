@@ -1,0 +1,5 @@
+---
+# setup couchDB on all instances
+- name: execute couchDB shell script
+  script: ./run-couchDB.sh
+
