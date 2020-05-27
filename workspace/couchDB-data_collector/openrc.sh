@@ -1,4 +1,13 @@
 #!/usr/bin/env bash
+
+# University of Melbourne
+# COMP90024 - Team52
+# Name of contributors and student id:
+# * Edward Formainir: 1073708
+# * Niloy Sarkar: 991245
+# * Marc Girard: 1155873
+# * Runqi Zhu: 793024
+
 # To use an OpenStack cloud you need to authenticate against the Identity
 # service named keystone, which returns a **Token** and **Service Catalog**.
 # The catalog contains the endpoints for all services the user/tenant has

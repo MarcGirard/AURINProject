@@ -1,9 +1,10 @@
 # COMP90024: City Analytics on the Cloud - Team52 - AURINProject
 
-Edward Formainir
-Niloy Sarkar
-Marc Girard
-Runqi Zhu
+Name of contributors and student id:
+* Edward Formainir: 1073708
+* Niloy Sarkar: 991245
+* Marc Girard: 1155873
+* Runqi Zhu: 793024
 
 Supervised by Prof. Richard Sinnott, Professor Applied Science & Director, E-Research at the University of Melbourne
 
