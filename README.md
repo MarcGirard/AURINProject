@@ -40,7 +40,6 @@ grunt couch-compile
 grunt couch-push
 ```
 
-<<<<<<< HEAD
 * To obtain JSON data regarding the playtime statistics for all available regions:
 ```shell script
 curl -XGET "http://${user}:${pass}@${masternode}:5984/aussteamids/_design/location/_view/gametime?reduce=true&group_level=3" > playtime_data.json
