@@ -41,3 +41,6 @@ grunt couch-push
 ```
 
 (The ansible playbooks and the python scripts wont begin without a password which can be found in the report).
+
+## Source data from AURIN and data collectors
+All the data can be available via https://drive.google.com/drive/folders/1EWHV1Bvgk1D3V4YqxtmwuWQGdjufm-ER?usp=sharing.
