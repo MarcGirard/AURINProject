@@ -14,13 +14,37 @@
     name: ['string-color']
     state: latest
 
-# copy data collector file
-- name: Copy steamid.py file
-  copy:
-    src: steamid.py
-    dest: ~/
+# install cryptography
+- name: Install cryptography
+  become: yes
+  pip:
+    name: ['cryptography']
+    state: latest
+# pip install cryptography
+
+# copy files for data collector
+- name: Copy files for data collector
+  copy: src={{ item.src }} dest={{ item.dest }}
+  with_items:
+    - { src: 'steamid.py', dest: '~/' }
+    - { src: 'friendid.py', dest: '~/' }
+    - { src: 'cityupdater.py', dest: '~/' }
+    - { src: 'city.sh', dest: '~/' }
+    - { src: 'Aus.json', dest: '~/' }
 
 # run data collector script
-- name: execute data collector on nodes
-  shell: python3 steamid.py
+- name: execute basic steam id data collector on a first instance
+  shell: python3 steamid.py 
+  when: inventory_hostname == '172.26.134.6'
+
+# run friend data collector script
+- name: execute friend data collector on a second instance
+  shell: python3 friendid.py 
+  when: inventory_hostname == '172.26.133.171'
+
+# run city shell script to add the proper city names and coordinates
+- name: execute city ushell script on a third instance
+  shell: ./city.sh
+  when: inventory_hostname == '172.26.133.101'
+
 

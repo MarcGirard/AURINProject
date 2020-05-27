@@ -4,85 +4,22 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
-import json
-import re
-from json.decoder import JSONDecodeError
-from stringcolor import cs
 import sys
+from stringcolor import cs
 import requests
 import couchdb
 import time
 
-KEY_LAST_ACCOUNT_ID = 'last_account_id'
 
 api_count = 0
 
 
-class SteamID:
-    account_id = 0
-    instance = 1
-    steam_2 = ''
-    steam_64 = 0
-    type = 1
-    universe = 0
-
-    def __init__(self, value):
-        self.steam_2 = value
-        match = re.match(r"^STEAM_(?P<universe>[0-4]):(?P<reminder>[0-1]):(?P<id>[0-9]{1,10})$", value)
-
-        if not match:
-            print('Incorrect STEAM ID')
-        else:
-            self.accountId = int(match.group('id'))
-            steam32 = (self.accountId << 1) | int(match.group('reminder'))
-            self.universe = int(match.group('universe'))
-            if self.universe == 0:
-                self.universe = 1
-            self.steam_64 = (self.universe << 56) | (self.type << 52) | (self.instance << 32) | steam32
-
-
-def get_last_account_id():
-    try:
-        with open('config.json', 'r') as config_file:
-            data = json.load(config_file)
-            if KEY_LAST_ACCOUNT_ID in data:
-                return data[KEY_LAST_ACCOUNT_ID]
-            return 0
-    except (FileNotFoundError, JSONDecodeError):
-        return 0
-
-
-def save_account_id(account_id):
-    with open('config.json', 'w') as config_file:
-        data = {KEY_LAST_ACCOUNT_ID: account_id}
-        json.dump(data, config_file)
-
-
-def generate_steam_id(account_id):
-    return f'STEAM_1:1:{account_id}'
-
-
-def start_program(account_id=0):
-    global api_count
-    db, db2 = init_couch_db()
-    while account_id < 4294967295:
-        account_id += 1
-        steam_2 = generate_steam_id(account_id)
-        steam_id_obj = SteamID(steam_2)
-        steam_id = steam_id_obj.steam_64
-        get_player_data(steam_id, db, db2)
-        save_account_id(account_id)
-        if api_count >= 100:
-            api_count = 0
-            print('waiting for a minute...')
-            time.sleep(60)
-
-
 def init_couch_db():
     couch = couchdb.Server(couchIP)
+    dbread = couch['aussteamids']
     db = couch['steamids']
     db2 = couch['aussteamids']
-    return db, db2
+    return db, db2, dbread
 
 
 def create_or_get_documents(db, steam_id):
@@ -95,12 +32,33 @@ def create_or_get_documents(db, steam_id):
     return regular_doc
 
 
+def start_program(account_id=0):
+    global api_count
+    db, db2, dbread = init_couch_db()
+    for d_id in dbread.view('_all_docs'):
+        doc_id = d_id['id']
+        url2 = f'http://api.steampowered.com/ISteamUser/GetFriendList/v0001/?key={STEAM_API_KEY}&steamid={doc_id}&relationship=friend'
+        resp = requests.get(url2)
+        api_count += 1
+        friend = resp.json()
+        if 'friendslist' in friend and 'friends' in friend['friendslist']:
+            listfriends = friend['friendslist']['friends']
+            for x in listfriends:
+                steam_id = x['steamid']
+                get_player_data(steam_id, db, db2)
+            # steam_id_obj has the 64 thing you need. Plug it into a request object and get the data you need
+            if api_count >= 100:
+                api_count = 0
+                print('waiting for a minute...')
+                time.sleep(60)
+
+
 def get_player_data(steam_id, db, db2):
     global api_count
     print(cs(f'Fetching player data for steamid {steam_id}', '#b4d3fa'))
     url = f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={STEAM_API_KEY}&steamids={steam_id}'
-    api_count += 1
     resp = requests.get(url)
+    api_count += 1
     try:
         info = resp.json()['response']['players'][0]
         info.pop('communityvisibilitystate', None)
@@ -143,11 +101,11 @@ def get_owned_games_data(steam_id, info):
 
 
 def save_to_db(db, steam_id, info, db2):
-    regular_doc = create_or_get_documents(db, steam_id)
+    aus_doc = create_or_get_documents(db, steam_id)
     for key in info:
         try:
-            regular_doc[key] = info[key]
-            db.save(regular_doc)
+            aus_doc[key] = info[key]
+            db.save(aus_doc)
             print(cs(f'Saved {steam_id} to db', '#00ff00'))
         except BaseException as e:
             print(cs(f'Unable to save {steam_id} to db', '#ff0000'))
@@ -162,9 +120,6 @@ def save_to_db(db, steam_id, info, db2):
             except BaseException as e:
                 print(cs(f'Unable to save {steam_id} to AUS db', '#ff0000'))
                 print(sys.exc_info())
-
-
-d
 
 
 if __name__ == '__main__':
@@ -186,9 +141,8 @@ if __name__ == '__main__':
     try:
         decrypted = f.decrypt(b'gAAAAABezWarvyr-225xZ7yBU9NtFfNS193l9r7zScyf8fZHKLvDKeYjfqMRGarBDHBjemul9CGgZnexlfg939DMFasQXBmXiULMxd5WKhJH9-kWPl2UYqNfkHR3ohQFUZqX2JQ9X8_S')
         couchIP = decrypted.decode()
-        decrypted = f.decrypt(b'gAAAAABezWar8dfCCfQhnRZRNHZ2HdqaSdL4moXv4jkJY8lbxD68_mRV63QrLwmPm-1ctzXivTt80IVJ7KZZQhaBS3Fum8oJ6fy85fPOw_VDUWz9ZotCg95XToXHYwUzYefAdHoQ-HLc')
+        decrypted = f.decrypt(b'gAAAAABezWarPJtSItCKAVLGxcezAA6Enb-eQXaTFixcGaD0Sdqanb1pjHDgyp0BhkSgqC0n6S8AfTXYJKgAPR6hqegTYpOVqn4Y6X9Rxt6HCqVkj2qX-ywc3rKQ8kxjkkvYhHhlt1pc')
         STEAM_API_KEY = decrypted.decode()
-        start_program(get_last_account_id())
+        start_program()
     except BaseException as e:
         print("Invalid Password")
-
