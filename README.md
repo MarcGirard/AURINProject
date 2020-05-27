@@ -24,16 +24,16 @@ Supervised by Prof. Richard Sinnott, Professor Applied Science & Director, E-Res
 * To launch ansible scripts
 
 ```shell script
-cd workspace/WorkshopWeek5/WorkshopWeek5/nectar/
+cd workspace/nectar/
 ./run-nectar.sh
-cd workspace/WorkshopWeek5/WorkshopWeek5/wordpress/
+cd workspace/wordpress/
 ./run-wp.sh
 ```
 
 * To run the webapp and visualize the data:
 
 ```shell script
-cd workspace/WorkshopWeek5/WorkshopWeek5/steam/
+cd workspace/steam/
 export dbname='aussteamids'
 grunt couch-compile
 grunt couch-push
