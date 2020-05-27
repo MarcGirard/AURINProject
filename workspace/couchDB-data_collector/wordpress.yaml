@@ -7,7 +7,7 @@
     - role: common
     - role: volumes
     - role: docker
-    - role: wordpress
+    # - role: wordpress
     - role: LXDE
     - role: couchDB-setup
     - role: data-collector

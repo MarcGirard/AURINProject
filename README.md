@@ -26,8 +26,8 @@ Supervised by Prof. Richard Sinnott, Professor Applied Science & Director, E-Res
 ```shell script
 cd workspace/nectar/
 ./run-nectar.sh
-cd workspace/wordpress/
-./run-wp.sh
+cd workspace/couchDB-data_collector/
+./run-cdc.sh
 ```
 
 * To run the webapp and visualize the data:
