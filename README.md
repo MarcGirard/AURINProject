@@ -40,6 +40,7 @@ grunt couch-compile
 grunt couch-push
 ```
 
+<<<<<<< HEAD
 * To obtain JSON data regarding the playtime statistics for all available regions:
 ```shell script
 curl -XGET "http://${user}:${pass}@${masternode}:5984/aussteamids/_design/location/_view/gametime?reduce=true&group_level=3" > playtime_data.json
@@ -53,3 +54,6 @@ Then the files “front_end_Map(Mental&Playtime).html”, and “front_end_Map(O
 
 ## Notes
 The ansible playbooks and the python scripts wont begin without a password which can be found in the report.
+
+## Source data from AURIN and data collectors
+Data can be available via https://drive.google.com/drive/folders/1EWHV1Bvgk1D3V4YqxtmwuWQGdjufm-ER?usp=sharing.
