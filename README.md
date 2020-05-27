@@ -40,4 +40,16 @@ grunt couch-compile
 grunt couch-push
 ```
 
-(The ansible playbooks and the python scripts wont begin without a password which can be found in the report).
+* To obtain JSON data regarding the playtime statistics for all available regions:
+```shell script
+curl -XGET "http://${user}:${pass}@${masternode}:5984/aussteamids/_design/location/_view/gametime?reduce=true&group_level=3" > playtime_data.json
+```
+
+* Web APP can be launched with:
+```shell script
+python3 front_end_rest-server.py
+```
+Then the files “front_end_Map(Mental&Playtime).html”, and “front_end_Map(Obestity&Playtime).html” can be launched with a web browser to observe the data visualization.
+
+## Notes
+The ansible playbooks and the python scripts wont begin without a password which can be found in the report.
