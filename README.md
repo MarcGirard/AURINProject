@@ -40,3 +40,4 @@ grunt couch-compile
 grunt couch-push
 ```
 
+(The ansible playbooks and the python scripts wont begin without a password which can be found in the report).
